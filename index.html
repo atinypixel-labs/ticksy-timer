@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- Meta -->
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+		<!-- Title -->
+		<title>Ticksy Timer</title>
+
+		<!-- Styles -->
+		<link rel="stylesheet" href="public/styles.css"/>
+	</head>
+
+	<body class="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black font-sans">
+
+		<h1 class="text-center text-3xl font-bold text-white mb-6">Ticksy Timer</h1>
+
+		<div class="w-full max-w-sm p-6 rounded-3xl shadow-xl bg-white/10 backdrop-blur-lg border border-white/20">
+			<!-- Timer Display -->
+			<div class="text-center">
+				<h1 class="text-8xl font-bold text-white drop-shadow-md" id="timer">01:00</h1>
+			</div>
+
+			<!-- Presets -->
+			<div class="grid grid-cols-2 gap-3 mt-6">
+				<button data-seconds="5" class="cursor-pointer px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium transition">+5s</button>
+				<button data-seconds="10" class="cursor-pointer px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium transition">+10s</button>
+				<button data-seconds="15" class="cursor-pointer px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium transition">+15s</button>
+				<button data-seconds="20" class="cursor-pointer px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-medium transition">+20s</button>
+			</div>
+
+			<!-- Controls -->
+			<div class="flex justify-center gap-3 mt-6">
+				<button id="startBtn" class="flex-1 cursor-pointer px-5 py-2.5 rounded-xl bg-green-500 hover:bg-green-600 text-white font-medium shadow-md transition">Start</button>
+				<button id="pauseBtn" class="flex-1 cursor-pointer px-5 py-2.5 rounded-xl bg-yellow-500 hover:bg-yellow-600 text-white font-medium shadow-md transition">Pause</button>
+				<button id="resetBtn" class="flex-1 cursor-pointer px-5 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow-md transition">Reset</button>
+			</div>
+		</div>
+
+		<script>
+			let timerDisplay = document.getElementById("timer");
+			let startBtn = document.getElementById("startBtn");
+			let pauseBtn = document.getElementById("pauseBtn");
+			let resetBtn = document.getElementById("resetBtn");
+			let presetBtns = document.querySelectorAll("[data-seconds]");
+
+			let countdown;
+			let timeLeft = 60;
+			let isRunning = false;
+
+			function updateDisplay() {
+				let minutes = Math.floor(timeLeft / 60);
+				let seconds = timeLeft % 60;
+				timerDisplay.textContent = `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+			}
+
+			function startTimer() {
+				if (isRunning) return;
+				isRunning = true;
+				countdown = setInterval(() => {
+					if (timeLeft > 0) {
+						timeLeft--;
+						updateDisplay();
+					} else {
+						clearInterval(countdown);
+						isRunning = false;
+					}
+				}, 1000);
+			}
+
+			function pauseTimer() {
+				clearInterval(countdown);
+				isRunning = false;
+			}
+
+			function resetTimer() {
+				clearInterval(countdown);
+				isRunning = false;
+				timeLeft = 60;
+				updateDisplay();
+			}
+
+			startBtn.addEventListener("click", startTimer);
+			pauseBtn.addEventListener("click", pauseTimer);
+			resetBtn.addEventListener("click", resetTimer);
+
+			presetBtns.forEach(btn => {
+				btn.addEventListener("click", () => {
+					timeLeft += parseInt(btn.dataset.seconds);
+					updateDisplay();
+				});
+			});
+
+			updateDisplay();
+		</script>
+	</body>
+
+</html>
